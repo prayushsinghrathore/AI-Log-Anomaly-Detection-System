@@ -1,21 +1,4 @@
 # 🛡️ AI Log Anomaly Detection System
-<p align="center">
-
-  <img src="screenshots/dashboard.png" width="900">
-
-</p>
-
-<p align="center">
-
-  <img src="https://img.shields.io/badge/Python-3.12-blue?logo=python">
-
-  <img src="https://img.shields.io/badge/Streamlit-Live-red?logo=streamlit">
-
-  <img src="https://img.shields.io/badge/Machine%20Learning-Isolation%20Forest-green">
-
-  <img src="https://img.shields.io/badge/License-MIT-yellow">
-
-</p>
 
 An AI-powered cybersecurity dashboard that automatically detects suspicious activity in Apache/Nginx access logs using the Isolation Forest algorithm and presents interactive visualizations through Streamlit.
 
