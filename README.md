@@ -1,6 +1,5 @@
 # 🛡️ AI Log Anomaly Detection System
-# Link :
-https://ai-log-anomaly-detection-system-jz9sqhkl9sz8bxbr3z4tpq.streamlit.app/
+
 > **Detect suspicious server activity using Machine Learning.**
 
 An AI-powered cybersecurity dashboard that automatically detects anomalous activity in **Apache/Nginx access logs** using the **Isolation Forest** algorithm. The application provides an intuitive **Streamlit dashboard** for log visualization, anomaly detection, and security monitoring.
@@ -11,6 +10,7 @@ An AI-powered cybersecurity dashboard that automatically detects anomalous activ
 ![Plotly](https://img.shields.io/badge/Plotly-Visualization-3F4F75?logo=plotly)
 
 ---
+https://ai-log-anomaly-detection-system-jz9sqhkl9sz8bxbr3z4tpq.streamlit.app/
 
 # ✨ Features
 
