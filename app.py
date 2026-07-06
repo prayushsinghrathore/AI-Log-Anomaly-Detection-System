@@ -15,7 +15,99 @@ st.set_page_config(
     page_title="AI Log Anomaly Detection",
     page_icon="🛡️",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
+
+# ---- Theme -----------------------------------------------------------------
+ACCENT = "#7c5cff"       # violet accent
+ANOMALY = "#ff5470"      # anomaly red/pink
+NORMAL = "#38bdf8"       # normal cyan
+BG = "#0e1117"
+CARD_BG = "#171a23"
+
+CUSTOM_CSS = f"""
+<style>
+    /* App background */
+    .stApp {{
+        background: radial-gradient(1200px 600px at 20% -10%, #1b1f2e 0%, {BG} 55%);
+    }}
+
+    /* Hero header banner */
+    .hero {{
+        border-radius: 18px;
+        padding: 26px 32px;
+        margin-bottom: 8px;
+        background: linear-gradient(120deg, rgba(124,92,255,0.22), rgba(56,189,248,0.10));
+        border: 1px solid rgba(124,92,255,0.35);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+    }}
+    .hero h1 {{
+        margin: 0; font-size: 2.0rem; font-weight: 800;
+        letter-spacing: -0.5px; color: #f5f6fa;
+    }}
+    .hero p {{
+        margin: 6px 0 0; color: #aab0c0; font-size: 0.98rem;
+    }}
+
+    /* KPI metric cards */
+    div[data-testid="stMetric"] {{
+        background: {CARD_BG};
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px;
+        padding: 16px 18px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+        transition: transform .15s ease, border-color .15s ease;
+    }}
+    div[data-testid="stMetric"]:hover {{
+        transform: translateY(-2px);
+        border-color: {ACCENT};
+    }}
+    div[data-testid="stMetricLabel"] p {{
+        color: #8b93a7; font-weight: 600; text-transform: uppercase;
+        font-size: 0.72rem; letter-spacing: 0.6px;
+    }}
+    div[data-testid="stMetricValue"] {{ color: #f5f6fa; font-weight: 800; }}
+
+    /* Section subheaders */
+    h3 {{ color: #e7e9f0 !important; font-weight: 700 !important; }}
+
+    /* Sidebar */
+    section[data-testid="stSidebar"] {{
+        background: {CARD_BG};
+        border-right: 1px solid rgba(255,255,255,0.06);
+    }}
+
+    /* Buttons */
+    .stButton>button, .stDownloadButton>button {{
+        border-radius: 10px; font-weight: 600;
+        border: 1px solid {ACCENT};
+        background: linear-gradient(120deg, {ACCENT}, #5b8bff);
+        color: white;
+    }}
+    .stButton>button:hover, .stDownloadButton>button:hover {{
+        filter: brightness(1.08); border-color: {ACCENT};
+    }}
+
+    /* Divider spacing */
+    hr {{ margin: 0.6rem 0 1.2rem; border-color: rgba(255,255,255,0.08); }}
+</style>
+"""
+
+
+def _style_fig(fig, height: int = 300):
+    """Apply the dark app theme to a Plotly figure."""
+    fig.update_layout(
+        template="plotly_dark",
+        margin=dict(t=10, b=0, l=0, r=0),
+        height=height,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        legend_title="",
+        font=dict(color="#c7cbd6"),
+    )
+    fig.update_xaxes(gridcolor="rgba(255,255,255,0.06)", zeroline=False)
+    fig.update_yaxes(gridcolor="rgba(255,255,255,0.06)", zeroline=False)
+    return fig
 
 
 @st.cache_data(show_spinner=False)
@@ -40,7 +132,8 @@ def _load_and_detect(raw_text: str, contamination: float) -> tuple[pd.DataFrame,
 
 
 def _get_raw_text() -> str | None:
-    st.sidebar.header("📁 Log source")
+    st.sidebar.markdown("### 🛡️ Controls")
+    st.sidebar.markdown("#### 📁 Log source")
     uploaded = st.sidebar.file_uploader(
         "Upload an access log (combined format)", type=["log", "txt"]
     )
@@ -62,9 +155,15 @@ def _get_raw_text() -> str | None:
 
 
 def main() -> None:
-    st.title("🛡️ AI Log Anomaly Detection")
-    st.caption(
-        "Isolation Forest-based detection of anomalous activity in server access logs."
+    st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class="hero">
+            <h1>🛡️ AI Log Anomaly Detection</h1>
+            <p>Isolation Forest–based detection of anomalous activity in server access logs.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
     contamination = st.sidebar.slider(
@@ -106,20 +205,18 @@ def main() -> None:
             timeline["type"] = timeline["anomaly"].map({True: "Anomaly", False: "Normal"})
             fig = px.area(
                 timeline, x="bucket", y="count", color="type",
-                color_discrete_map={"Anomaly": "#e4572e", "Normal": "#4c78a8"},
+                color_discrete_map={"Anomaly": ANOMALY, "Normal": NORMAL},
             )
-            fig.update_layout(margin=dict(t=10, b=0, l=0, r=0), legend_title="")
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(_style_fig(fig), use_container_width=True)
 
     with right:
         st.subheader("Anomaly score distribution")
         fig = px.histogram(
             data, x="anomaly_score", nbins=40,
             color=data["anomaly"].map({True: "Anomaly", False: "Normal"}),
-            color_discrete_map={"Anomaly": "#e4572e", "Normal": "#4c78a8"},
+            color_discrete_map={"Anomaly": ANOMALY, "Normal": NORMAL},
         )
-        fig.update_layout(margin=dict(t=10, b=0, l=0, r=0), legend_title="")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(_style_fig(fig), use_container_width=True)
 
     left2, right2 = st.columns(2)
     with left2:
@@ -127,8 +224,8 @@ def main() -> None:
         sc = data["status"].value_counts().sort_index().reset_index()
         sc.columns = ["status", "count"]
         fig = px.bar(sc, x="status", y="count")
-        fig.update_layout(margin=dict(t=10, b=0, l=0, r=0))
-        st.plotly_chart(fig, use_container_width=True)
+        fig.update_traces(marker_color=ACCENT)
+        st.plotly_chart(_style_fig(fig), use_container_width=True)
 
     with right2:
         st.subheader("Top source IPs by anomalies")
@@ -141,9 +238,9 @@ def main() -> None:
             st.write("No anomalies detected at this threshold.")
         else:
             fig = px.bar(top, x="anomalies", y="ip", orientation="h")
-            fig.update_layout(margin=dict(t=10, b=0, l=0, r=0),
-                              yaxis=dict(categoryorder="total ascending"))
-            st.plotly_chart(fig, use_container_width=True)
+            fig.update_traces(marker_color=ANOMALY)
+            fig.update_layout(yaxis=dict(categoryorder="total ascending"))
+            st.plotly_chart(_style_fig(fig), use_container_width=True)
 
     st.divider()
 
