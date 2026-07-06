@@ -1,98 +1,214 @@
 # 🛡️ AI Log Anomaly Detection System
 
-An AI-powered cybersecurity dashboard that automatically detects suspicious activity in Apache/Nginx access logs using the Isolation Forest algorithm and presents interactive visualizations through Streamlit.
+> **Detect suspicious server activity using Machine Learning.**
+
+An AI-powered cybersecurity dashboard that automatically detects anomalous activity in **Apache/Nginx access logs** using the **Isolation Forest** algorithm. The application provides an intuitive **Streamlit dashboard** for log visualization, anomaly detection, and security monitoring.
+
+![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-F7931E?logo=scikitlearn)
+![Plotly](https://img.shields.io/badge/Plotly-Visualization-3F4F75?logo=plotly)
 
 ---
 
-A machine-learning application that detects anomalous activity in server access
-logs using an **Isolation Forest**, with an interactive **Streamlit** dashboard
-for log visualization, anomaly detection, and security monitoring.
+# ✨ Features
 
-## Features
+### 📄 Log Parsing
+- Parses **Apache/Nginx Combined Access Logs**
+- Converts raw logs into structured records
+- Automatically skips malformed log entries
 
-- **Log parsing** — parses Apache/Nginx *combined* access-log format into
-  structured records.
-- **Feature engineering** — derives behavioural signals per request and per
-  source IP: error rates, response sizes, request frequency, URL/User-Agent
-  characteristics, off-hours activity, and unusual HTTP methods.
-- **Unsupervised detection** — Isolation Forest flags outliers with no labelled
-  training data required; an adjustable *contamination* threshold controls
-  sensitivity.
-- **Interactive dashboard** — KPIs, request timeline (normal vs. anomalous),
-  anomaly-score distribution, status-code breakdown, top offending IPs, and a
-  sortable/exportable table of flagged requests.
-- **Synthetic data generator** — produces realistic traffic with injected
-  attacks (scanners, SQLi probes, path traversal, data-exfil-style large
-  responses) so the app works out of the box.
+### 🧠 Intelligent Feature Engineering
+Extracts behavioral features such as:
+- Request frequency
+- Response size
+- HTTP status patterns
+- Error rate
+- User-Agent characteristics
+- Off-hours activity
+- Suspicious HTTP methods
+- Per-IP behavioral statistics
 
-## Quick start
+### 🤖 AI-Powered Anomaly Detection
+Uses **Isolation Forest**, an unsupervised Machine Learning algorithm, to identify unusual requests without requiring labeled training data.
+
+The anomaly sensitivity can be adjusted using a configurable **Contamination Threshold**.
+
+### 📊 Interactive Dashboard
+Visualize security events using:
+- 📈 Request Timeline
+- 🚨 Anomaly Score Distribution
+- 🌐 Top Suspicious IP Addresses
+- 📉 HTTP Status Code Analytics
+- 📋 Sortable Anomaly Table
+- 📥 Export anomalies as CSV
+
+### 🧪 Synthetic Log Generator
+Generate realistic server traffic with injected attacks including:
+- SQL Injection
+- Path Traversal
+- Web Scanners
+- Large Data Exfiltration Responses
+- Brute Force Patterns
+
+---
+
+# 🛠 Tech Stack
+
+| Category | Technologies |
+|----------|--------------|
+| Programming | Python |
+| Dashboard | Streamlit |
+| Machine Learning | Scikit-Learn (Isolation Forest) |
+| Data Processing | Pandas, NumPy |
+| Visualization | Plotly |
+
+---
+
+# 🧠 System Workflow
+
+```text
+Apache / Nginx Logs
+        │
+        ▼
+   Log Parsing
+        │
+        ▼
+Feature Engineering
+        │
+        ▼
+ Isolation Forest
+        │
+        ▼
+ Anomaly Detection
+        │
+        ▼
+Streamlit Dashboard
+```
+
+---
+
+# ⚡ Quick Start
+
+Clone the repository
 
 ```bash
-cd ai-log-anomaly-detection
+git clone https://github.com/YOUR_USERNAME/AI-Log-Anomaly-Detection-System.git
+cd AI-Log-Anomaly-Detection-System
+```
 
-# 1. (recommended) create a virtual environment
-python3 -m venv .venv && source .venv/bin/activate
+Create a virtual environment
 
-# 2. install dependencies
+```bash
+python -m venv .venv
+```
+
+Activate it
+
+**macOS/Linux**
+
+```bash
+source .venv/bin/activate
+```
+
+**Windows**
+
+```bash
+.venv\Scripts\activate
+```
+
+Install dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
-# 3. generate a sample log with injected anomalies
+Generate sample logs
+
+```bash
 python scripts/generate_sample_logs.py --out data/sample_access.log --n 5000
+```
 
-# 4. launch the dashboard
+Run the application
+
+```bash
 streamlit run app.py
 ```
 
-Then open the URL Streamlit prints (default http://localhost:8501), click
-**Use bundled sample log**, or upload your own `.log` / `.txt` access log.
+---
 
-## Project layout
+# 📂 Project Structure
 
-```
-ai-log-anomaly-detection/
-├── app.py                       # Streamlit dashboard
+```text
+AI-Log-Anomaly-Detection-System/
+│
+├── app.py
 ├── requirements.txt
 ├── README.md
 ├── src/
-│   ├── log_parser.py            # combined-format log → DataFrame
-│   ├── features.py              # numeric feature engineering
-│   └── detector.py              # Isolation Forest wrapper
+│   ├── log_parser.py
+│   ├── features.py
+│   └── detector.py
 ├── scripts/
-│   └── generate_sample_logs.py  # synthetic log generator
-└── data/                        # generated sample logs (gitignored)
+│   └── generate_sample_logs.py
+└── data/
 ```
 
-## How it works
+---
 
-1. **Parse** raw log lines into structured fields (IP, timestamp, method, path,
-   status, bytes, user agent).
-2. **Engineer features** — each request becomes a numeric vector combining its
-   own attributes with aggregates about its source IP.
-3. **Detect** — features are standardized and scored by an Isolation Forest.
-   Requests that isolate quickly in the tree ensemble receive high anomaly
-   scores and are flagged.
-4. **Visualize** — the dashboard surfaces flagged requests and traffic patterns
-   for a security analyst to triage.
+# 🔍 How It Works
 
-## Using your own logs
+1. **Parse Logs** – Convert Apache/Nginx access logs into structured records.
 
-Any Apache/Nginx *combined* format log works, e.g.:
+2. **Feature Engineering** – Extract request-level and IP-level behavioral features.
 
-```
+3. **Detect Anomalies** – Apply the Isolation Forest algorithm to identify suspicious requests.
+
+4. **Visualize Results** – Display insights through an interactive Streamlit dashboard for easier analysis.
+
+---
+
+# 📥 Using Your Own Logs
+
+The application supports any **Apache/Nginx Combined Access Log**.
+
+Example:
+
+```text
 12.34.56.78 - - [06/Jul/2026:10:00:00 +0000] "GET /index.html HTTP/1.1" 200 1043 "-" "Mozilla/5.0 ..."
 ```
 
-Upload it via the sidebar; unparseable lines are skipped automatically.
+Upload your `.log` or `.txt` file using the sidebar. Invalid or malformed log entries are skipped automatically.
 
-## Programmatic use
+---
+
+# 💻 Programmatic Usage
 
 ```python
 from src import parse_log_file, build_features, AnomalyDetector
 
 logs = parse_log_file("data/sample_access.log")
 features = build_features(logs)
+
 results = AnomalyDetector(contamination=0.03).fit_predict(features)
 
 flagged = logs[results["anomaly"].values]
 print(flagged[["ip", "path", "status"]])
 ```
+
+---
+
+# 🚀 Future Improvements
+
+- 🌍 GeoIP Mapping
+- 📧 Email Alerts
+- ⚡ Real-time Log Streaming
+- 🐳 Docker Support
+- ☸️ Kubernetes Deployment
+- 🔥 SIEM Integration
+
+---
+
+# ⭐ Support
+
+If you found this project useful, consider giving it a **Star ⭐** on GitHub.
